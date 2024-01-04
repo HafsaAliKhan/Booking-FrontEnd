@@ -2,9 +2,15 @@ import "./Hotel.css"
 import Navbar from '../../Components/navbar/navbar'
 import Header from '../../Components/navbar/header/header'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faLocationDot } from "@fortawesome/free-solid-svg-icons"
+import { faCircleArrowLeft, faCircleArrowRight, faCircleXmark, faLocationDot } from "@fortawesome/free-solid-svg-icons"
+import MailList from "../../Components/mailList/maiList"
+import Footer from "../../Components/footer/footer"
+import { useState } from "react"
 
 const Hotel = () => {
+
+    const [slideNumber, setSlideNumber] = useState(0);
+    const [open, setOpen] = useState(false);
 
     const photos = [
         {
@@ -27,12 +33,36 @@ const Hotel = () => {
         },
     ];
 
+    const handleOpen = (i) => {
+        setSlideNumber(i);
+        setOpen(true);
+    }
+
+    const handleMove = (direction) => {
+        let newSlideNumber;
+
+        if(direction==="l"){
+            newSlideNumber = slideNumber === 0 ? 5 : slideNumber-1
+        } else{
+            newSlideNumber = slideNumber === 5 ? 0 : slideNumber+1
+        }
+
+        setSlideNumber(newSlideNumber)
+    }
 
     return (
         <div>
             <Navbar />
             <Header type="list" />
             <div className="hotelContainer">
+                {open && <div className="slider">
+                    <FontAwesomeIcon icon={faCircleXmark} className="close" onClick={() => setOpen(false)}/>
+                    <FontAwesomeIcon icon={faCircleArrowLeft} className="arrow" onClick={() => handleMove("l")}/>
+                    <div className="sliderWrapper">
+                        <img src={photos[slideNumber].src} alt="" className="sliderImg" />
+                    </div>
+                    <FontAwesomeIcon icon={faCircleArrowRight} className="arrow" onClick={() => handleMove("r")}/>
+                </div>}
                 <div className="hotelWrapper">
                     <button className="bookNow">Reserve or Book Now!</button>
                     <h1 className="hotelTitle">Grand Hotel</h1>
@@ -47,11 +77,11 @@ const Hotel = () => {
                         Book a stay over PKR20345 at this propert and get a free airport taxi
                     </span>
                     <div className="hotelImages">
+                            {photos.map((photo, i) => (
                         <div className="hotelImgWrapper">
-                            {photos.map(photo => (
-                                <img src={photo.src} alt="" className="hotelImg" />
-                            ))}
+                            <img onClick={(() => handleOpen(i))} src={photo.src} alt="" className="hotelImg" />
                         </div>
+                            ))}
                         <div className="hotelDetails">
                             <div className="hotelDetailsTexts">
                                 <h1 className="hotelTitle">Stay In The Heart Of Islamabad</h1>
@@ -63,7 +93,7 @@ const Hotel = () => {
                                     Taxila Museum is 11 miles from Serenity Corner, while Ayūb National Park is 12 miles from the property. The nearest airport is Islamabad International, 11 miles from the accommodation, and the property offers a paid airport shuttle service.
                                 </p>
                             </div>
-                            <div className="hotelDetailsPrice"></div>
+                            <div className="hotelDetailsPrice">
                             <h1>Perfect for a 9-night stay!</h1>
                             <span>
                                 Located in the real heart of Islamabad, this proper has an
@@ -73,9 +103,12 @@ const Hotel = () => {
                                 <b>PKR45000</b> (9 nights)
                             </h2>
                             <button>Reserve or Book Now!</button>
+                            </div>
                         </div>
                     </div>
                 </div>
+                <MailList/>
+                <Footer/>
             </div>
         </div>
     )
